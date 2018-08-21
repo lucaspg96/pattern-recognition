@@ -174,3 +174,6 @@ pip-selfcheck.json
 
 
 # End of https://www.gitignore.io/api/macos,linux,python,jupyternotebook
+
+#PyCharm
+.idea/
