@@ -54,3 +54,7 @@ class ClusterNNClassifier(LearningAlgorithm):
     def score(self,X,Y):
         predictions = [1 if self.predict(x)==y else 0 for x,y in zip(X,Y)] 
         return sum(predictions)/len(predictions)
+    
+class NNClassifier(KNNClassifier):
+    def __init__(self, distanceAlgorithm=ut.euclidian_distance):
+        KNNClassifier.__init__(self, k=1, distanceAlgorithm=distanceAlgorithm)
