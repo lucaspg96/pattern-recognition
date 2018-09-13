@@ -20,3 +20,12 @@ def covariance(X):
     n = X.shape[1]
     R = np.matmul(X,X.transpose())/n
     return R - np.outer(m,m.transpose())
+
+def generate_mahalanobis_distance(Q):
+    def distance_function(x,y):
+        z = x - y
+        right = np.matmul(Q,z)
+        left = np.matmul(z.transpose(),right)
+        return math.sqrt(left)
+    
+    return distance_function
