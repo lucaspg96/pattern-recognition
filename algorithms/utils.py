@@ -14,3 +14,9 @@ def train_test_split(data,train_rate):
     test_data = data[train_size:,:]
     
     return train_data,test_data
+
+def covariance(X):
+    m = np.mean(X,axis=1).transpose()
+    n = X.shape[1]
+    R = np.matmul(X,X.transpose())/n
+    return R - np.outer(m,m.transpose())
