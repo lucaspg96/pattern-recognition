@@ -7,6 +7,7 @@ class NormalNaiveBayes(LearningAlgorithm):
    
     def fit(self,X,Y,itter=100):   
         classes = {}
+        n = X.shape[0]
         for (x,y) in zip(X,Y):
             if not y in classes:
                 classes[y] = []
@@ -23,7 +24,8 @@ class NormalNaiveBayes(LearningAlgorithm):
                 "icov": np.linalg.inv(np.diag(var)),
                 "rtcov": sqrt(np.prod(var)),
                 "mean": m,
-                "std": std
+                "std": std,
+                "prob_priori": data.shape[0]/n
             }
             
     def __prob__(self,x,k):
@@ -31,8 +33,9 @@ class NormalNaiveBayes(LearningAlgorithm):
         m = self.cells[k]["mean"]
         ic = self.cells[k]["icov"]
         rtc = self.cells[k]["rtcov"]
+        prob_priori = self.cells[k]["prob_priori"]
         z = x-m
-        return (exp(np.matmul(z, np.matmul(ic,z)))*(-0.5))/(pow(2*pi,x.shape[0]/2)*rtc)
+        return prob_priori*(exp(np.matmul(z, np.matmul(ic,z)))*(-0.5))/(pow(2*pi,x.shape[0]/2)*rtc)
             
     def predict(self,x):
         distances = [(k,self.__prob__(x,k)) for k in self.cells]
