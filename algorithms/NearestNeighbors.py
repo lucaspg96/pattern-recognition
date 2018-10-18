@@ -16,9 +16,9 @@ class KNNClassifier(LearningAlgorithm):
     def predict(self,x):
         distances = [(d[1],self.distance(x,list(d[0]))) for d in self.data]
         distances = sorted(distances,key=lambda x: x[1])
-        top_k = distances[:self.k]
+        top_k = [c for c,_ in distances[:self.k]]
         counter = Counter(top_k)
-        return counter.most_common(1)[0][0][0]
+        return counter.most_common(1)[0][0]
     
     
     def score(self,X,Y):
