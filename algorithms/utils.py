@@ -81,3 +81,11 @@ def is_invertible(X):
     if cond > 30:
         return False, "Matrix is ill-conditioned({})".format(cond)
     return True
+
+def one_hot_encode(x):
+    n = max(x)+1
+    matrix = np.zeros((len(x),n))
+    for i,c in enumerate(x):
+        matrix[i,c] = 1
+        
+    return matrix
