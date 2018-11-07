@@ -1,7 +1,7 @@
 import numpy as np
 from algorithms.utils import covariance
 from algorithms.LearningAlgorithm import LearningAlgorithm
-from math import sqrt, pi, exp, pow
+from math import sqrt, pi, exp, pow, log
 
 class NormalNaiveBayes(LearningAlgorithm):
    
@@ -35,7 +35,7 @@ class NormalNaiveBayes(LearningAlgorithm):
         cov_det = self.cells[k]["cov_det"]
         prob_priori = self.cells[k]["prob_priori"]
         z = x-m
-        return math.log(prob_priori) - 0.5*np.matmul(z, np.matmul(ic,z)) - 0.5*math.log(cov_det)
+        return log(prob_priori) - 0.5*np.matmul(z, np.matmul(ic,z)) - 0.5*log(cov_det)
             
     def predict(self,x):
         distances = [(k,self.__prob__(x,k)) for k in self.cells]

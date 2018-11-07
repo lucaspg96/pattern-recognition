@@ -5,7 +5,7 @@ import numpy as np
 class DistanceCell():
         def __init__(self,m,Q):
             self.m = m
-            self.distance = generate_mahalanobis_distance(Q)
+            self.distance = ut.generate_mahalanobis_distance(Q)
             
         def calculate(self, x):
             return self.distance(self.m,x)
@@ -31,7 +31,7 @@ class QuadraticClassifier(LearningAlgorithm):
             for k in classes:
                 data = np.array(classes[k])
                 m = np.mean(data,axis=0)
-                cov = covariance(data.transpose())
+                cov = ut.covariance(data.transpose())
 
                 invertibility, message = ut.is_invertible(cov)
                 if invertibility:
@@ -63,7 +63,7 @@ class QuadraticClassifier(LearningAlgorithm):
             for k in classes:
                 data = np.array(classes[k])
                 m = np.mean(data,axis=0)
-                cov = covariance(data.transpose())
+                cov = ut.covariance(data.transpose())
                 self.cells[k] = DistanceCell(m,np.linalg.inv(cov))
                     
             

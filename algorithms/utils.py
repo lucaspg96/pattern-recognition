@@ -7,7 +7,11 @@ def manhattan_distance(a,b):
 def euclidian_distance(a,b):
     return np.linalg.norm(a-b)
 
-def train_test_split(data,train_rate):
+def train_test_split(data,train_rate, shuffle=True):
+    
+    if shuffle:
+        np.random.shuffle(data)
+    
     train_size = math.floor(train_rate*data.shape[0])
 
     train_data = data[0: train_size,:]
