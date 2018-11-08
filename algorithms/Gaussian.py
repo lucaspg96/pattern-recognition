@@ -3,9 +3,9 @@ from algorithms.utils import covariance
 from algorithms.LearningAlgorithm import LearningAlgorithm
 from math import sqrt, pi, exp, pow, log
 
-class NormalNaiveBayes(LearningAlgorithm):
+class NormalNaiveBayes():
    
-    def fit(self,X,Y,itter=100):   
+    def fit(self,X,Y):   
         classes = {}
         n = X.shape[0]
         for (x,y) in zip(X,Y):
@@ -20,8 +20,9 @@ class NormalNaiveBayes(LearningAlgorithm):
             m = np.mean(data,axis=0)
             std = np.std(data,axis=0)
             var = np.var(data,axis=0)
+            i_var = np.array([1/v if not v == 0 else 0 for v in var])
             self.cells[k] = {
-                "icov": np.linalg.inv(np.diag(var)),
+                "icov": i_var,
                 "cov_det": np.prod(var),
                 "mean": m,
                 "std": std,
@@ -29,13 +30,17 @@ class NormalNaiveBayes(LearningAlgorithm):
             }
             
     def __prob__(self,x,k):
+#         print("Prob of {}".format(k))
         s = self.cells[k]["std"]
         m = self.cells[k]["mean"]
         ic = self.cells[k]["icov"]
         cov_det = self.cells[k]["cov_det"]
         prob_priori = self.cells[k]["prob_priori"]
         z = x-m
-        return log(prob_priori) - 0.5*np.matmul(z, np.matmul(ic,z)) - 0.5*log(cov_det)
+        if cov_det == 0:
+            cov_det = 1
+        return log(prob_priori) \
+                - 0.5*z.dot(ic*z) - 0.5*log(cov_det)
             
     def predict(self,x):
         distances = [(k,self.__prob__(x,k)) for k in self.cells]
