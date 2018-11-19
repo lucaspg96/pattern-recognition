@@ -38,19 +38,16 @@ class QuadraticClassifier(LearningAlgorithm):
                     self.cells[k] = DistanceCell(m,np.linalg.inv(cov))
                 else:
                     need_pinv = True
-                    print(message)
                     break
-            
+    
             if need_pinv:
                 if self.pinv_mode == "friedman":
-                    print("Computing regularized covariances matrices")
                     covs = ut.friedman_regularization(.5,1,classes)
                     for k in classes:
                         m = np.mean(data,axis=0)
                         self.cells[k] = DistanceCell(m,np.linalg.inv(covs[k]))
                         
                 elif self.pinv_mode == "pooled":
-                    print("Computing pooled covariance matrix")
                     cov = ut.pooled_covariance(classes)
                     inv_cov = np.linalg.inv(cov)
                     for k in classes:

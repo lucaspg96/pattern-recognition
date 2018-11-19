@@ -1,7 +1,8 @@
 import numpy as np
 from algorithms.utils import covariance
 from algorithms.LearningAlgorithm import LearningAlgorithm
-from math import sqrt, pi, exp, pow, log
+import math
+from algorithms import utils as ut
 
 class NormalNaiveBayes():
    
@@ -30,7 +31,6 @@ class NormalNaiveBayes():
             }
             
     def __prob__(self,x,k):
-#         print("Prob of {}".format(k))
         s = self.cells[k]["std"]
         m = self.cells[k]["mean"]
         ic = self.cells[k]["icov"]
@@ -39,8 +39,8 @@ class NormalNaiveBayes():
         z = x-m
         if cov_det == 0:
             cov_det = 1
-        return log(prob_priori) \
-                - 0.5*z.dot(ic*z) - 0.5*log(cov_det)
+        return math.log(prob_priori) \
+                - 0.5*z.dot(ic*z) - 0.5*math.log(cov_det)
             
     def predict(self,x):
         distances = [(k,self.__prob__(x,k)) for k in self.cells]
@@ -76,7 +76,7 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
                 std = np.std(data,axis=0)
                 cov = covariance(data.transpose())
                 
-                invertibility, message = is_invertible(cov)
+                invertibility, message = ut.is_invertible(cov)
                 if invertibility:
                     self.cells[k] = {
                         "icov": np.linalg.inv(cov),
@@ -88,13 +88,11 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
                     
                 else:
                     need_pinv = True
-                    print(message)
                     break
                 
             if need_pinv:
                 if self.pinv_mode == "friedman":
-                    print("Computing regularized covariances matrices")
-                    covs = friedman_regularization(.5,1,classes)
+                    covs = ut.friedman_regularization(.5,1,classes)
                     for k in classes:
                         m = np.mean(data,axis=0)
                         std = np.std(data,axis=0)
@@ -108,8 +106,7 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
                         }
 
                 elif self.pinv_mode == "pooled":
-                    print("Computing pooled covariance matrix")
-                    cov = pooled_covariance(classes)
+                    cov = ut.pooled_covariance(classes)
                     inv_cov = np.linalg.inv(cov)
                     for k in classes:
                         m = np.mean(data,axis=0)
