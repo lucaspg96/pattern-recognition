@@ -70,17 +70,18 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
         self.cells = {}
         
         if self.check_invertibility:
+            need_pinv = False
             for k in classes:
                 data = np.array(classes[k])
                 m = np.mean(data,axis=0)
                 std = np.std(data,axis=0)
-                cov = covariance(data.transpose())
+                cov = ut.covariance(data.transpose())
                 
                 invertibility, message = ut.is_invertible(cov)
                 if invertibility:
                     self.cells[k] = {
                         "icov": np.linalg.inv(cov),
-                        "rtcov": math.sqrt(np.linalg.det(cov)),
+                        "cov_det": np.linalg.det(cov),
                         "mean": m,
                         "std": std,
                         "prob_priori": data.shape[0]/n
@@ -126,7 +127,7 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
                 data = np.array(classes[k])
                 m = np.mean(data,axis=0)
                 std = np.std(data,axis=0)
-                cov = covariance(data.transpose())
+                cov = ut.covariance(data.transpose())
                 self.cells[k] = {
                     "icov": np.linalg.inv(cov),
                     "cov_det": np.linalg.det(cov),
@@ -142,7 +143,8 @@ class QuadraticGaussianClassifier(LearningAlgorithm):
         cov_det = self.cells[k]["cov_det"]
         prob_priori = self.cells[k]["prob_priori"]
         z = x-m
-        return math.log(prob_priori) - 0.5*np.matmul(z, np.matmul(ic,z)) - 0.5*math.log(cov_det)
+        return math.log(prob_priori) \
+            - 0.5*np.matmul(z, np.matmul(ic,z)) - 0.5*math.log(cov_det)
             
     def predict(self,x):
         distances = [(k,self.__prob__(x,k)) for k in self.cells]

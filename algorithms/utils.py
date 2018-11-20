@@ -83,7 +83,7 @@ def is_invertible(X):
         return False, "Matrix isn't inversible because has rank {}".format(rank)
     if cond > 30:
         return False, "Matrix is ill-conditioned({})".format(cond)
-    return True
+    return True,""
 
 def one_hot_encode(x):
     n = max(x)+1
