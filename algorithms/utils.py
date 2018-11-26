@@ -1,5 +1,8 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt
+from lxml import etree as et
+import pandas as pd
 
 def manhattan_distance(a,b):
     return sum(a-b)
@@ -80,7 +83,7 @@ def is_invertible(X):
         return False, "Matrix isn't inversible because has rank {}".format(rank)
     if cond > 30:
         return False, "Matrix is ill-conditioned({})".format(cond)
-    return True
+    return True,""
 
 def one_hot_encode(x):
     n = max(x)+1
@@ -89,3 +92,57 @@ def one_hot_encode(x):
         matrix[i,c] = 1
         
     return matrix
+
+def load_xml_news(path,plot=False):
+    parser = et.XMLParser(recover=True)
+    data = et.parse(path, parser=parser).getroot()
+
+    tags = ["title","link","pubDate","description","image","text","when"]
+    hist = {}
+    for t in tags:
+        hist[t] = 0;
+
+    items = data.findall("item")
+    total = len(items)
+    news = []
+    labels = []
+
+    for c in items:
+        aux = ""
+        text = c.find("text").text
+        desc = c.find("description").text
+        if not text == None:
+            aux += text
+        if not desc == None:
+            aux += desc
+        if aux!="":
+            news.append(aux)
+            labels.append(c.get("category"))
+
+        for t in tags:
+            if c.find(t).text != None:
+                hist[t] += 1
+                
+    if plot:
+        df = pd.DataFrame({"category":labels})
+        fig = plt.figure(figsize=(10,6))
+        plt.title("Ocorrências das categorias")
+        _ = df["category"].value_counts().plot(kind="bar")
+        
+    return news, labels
+
+def load_articles(path, delimiter="\t", plot=False):
+    df = pd.read_csv(path,delimiter=delimiter)
+    
+    news = []
+    labels = []
+
+    for row in df.iterrows():
+        row = row[1]
+        news.append(row.get("text"))
+        labels.append(row.get("category"))
+
+    if plot:
+        _ = df["category"].value_counts().plot(kind="bar")
+        
+    return news, labels   
