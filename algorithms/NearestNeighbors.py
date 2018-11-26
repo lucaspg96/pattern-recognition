@@ -26,7 +26,7 @@ class KNNClassifier(LearningAlgorithm):
         return sum(predictions)/len(predictions)
     
 
-class ClusterNNClassifier(LearningAlgorithm):
+class NearestCentroidClassifier(LearningAlgorithm):
     
     def __init__(self, distanceAlgorithm=ut.euclidian_distance):
         self.distance = distanceAlgorithm
